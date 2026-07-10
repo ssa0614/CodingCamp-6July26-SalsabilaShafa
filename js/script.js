@@ -1,11 +1,48 @@
-// Get HTML elements
-const form = document.getElementById("transaction-form");
-const transactionList = document.getElementById("transaction-list");
-const totalBalance = document.getElementById("total-balance");
+// Constants
+const STORAGE_KEY = "transactions";
+const CATEGORIES = ["Food", "Transport", "Fun"];
+const CATEGORY_COLORS = {
+  Food:      "#f97316",  // orange
+  Transport: "#3b82f6",  // blue
+  Fun:       "#a855f7"   // purple
+};
+const MAX_AMOUNT = 1_000_000;
+const MAX_NAME_LENGTH = 100;
 
-// Store transactions
+// State
 let transactions = [];
-let expenseChart;
+let expenseChart = null;
+
+// Storage utilities
+function isStorageAvailable() {
+  try {
+    const testKey = "__storage_test__";
+    localStorage.setItem(testKey, "1");
+    localStorage.getItem(testKey);
+    localStorage.removeItem(testKey);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function saveTransactions() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
+  } catch (e) {
+    if (e.name === "QuotaExceededError" || e.name === "SecurityError") {
+      showStorageWarning("save-fail");
+    }
+  }
+}
+
+// UI helpers
+function showStorageWarning() {
+  const banner = document.getElementById("storage-warning");
+  if (banner) {
+    banner.removeAttribute("hidden");
+  }
+}
 
 // Load saved transactions
 const savedTransactions = localStorage.getItem("transactions");
