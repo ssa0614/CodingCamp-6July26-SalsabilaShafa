@@ -16,9 +16,13 @@
     <div class="container">
 
         <!-- Title -->
-        <header>
-            <h1>Expense & Budget Visualizer</h1>
-        </header>
+<header class="header">
+    <h1>Expense & Budget Visualizer</h1>
+
+    <button id="theme-toggle">
+        🌙 Dark Mode
+    </button>
+</header>
 
         <!-- Storage Warning -->
         <div id="storage-warning" class="storage-warning" hidden>⚠️ Data cannot be saved in this session.</div>
@@ -75,7 +79,16 @@
             <!-- Transaction List -->
             <div class="transactions">
 
-                <h2>Transactions</h2>
+                <div class="transaction-header">
+    <h2>Transactions</h2>
+
+    <select id="sort">
+        <option value="default">Default</option>
+        <option value="high">Highest Amount</option>
+        <option value="low">Lowest Amount</option>
+        <option value="category">Category (A-Z)</option>
+    </select>
+</div>
 
                 <div id="transaction-list">
 
