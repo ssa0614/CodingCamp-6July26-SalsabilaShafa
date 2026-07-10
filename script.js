@@ -9,9 +9,43 @@ const CATEGORY_COLORS = {
 const MAX_AMOUNT = 1_000_000;
 const MAX_NAME_LENGTH = 100;
 
+// DOM Elements
+const form = document.getElementById("transaction-form");
+const transactionList = document.getElementById("transaction-list");
+const totalBalance = document.getElementById("total-balance");
+
 // State
 let transactions = [];
 let expenseChart = null;
+
+// =====================
+// Dark Mode Toggle
+// =====================
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const themeToggle = document.getElementById("theme-toggle");
+
+    if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark");
+        themeToggle.textContent = "☀️ Light Mode";
+    }
+
+    themeToggle.addEventListener("click", function () {
+
+        document.body.classList.toggle("dark");
+
+        if (document.body.classList.contains("dark")) {
+            localStorage.setItem("theme", "dark");
+            themeToggle.textContent = "☀️ Light Mode";
+        } else {
+            localStorage.setItem("theme", "light");
+            themeToggle.textContent = "🌙 Dark Mode";
+        }
+
+    });
+
+});
 
 // Storage utilities
 function isStorageAvailable() {
@@ -95,7 +129,7 @@ function displayTransactions() {
         const div = document.createElement("div");
 
         div.innerHTML = `
-            <div class="transaction-item">
+            <div class="transaction-item ${transaction.amount > 100 ? "high-expense" : ""}">
                 <div>
                     <strong>${transaction.itemName}</strong><br>
                     $${transaction.amount.toFixed(2)} • ${transaction.category}
@@ -171,29 +205,24 @@ displayTransactions();
 updateBalance();
 updateChart();
 
-}// =====================
-// Dark Mode Toggle
-// =====================
-
-const themeToggle = document.getElementById("theme-toggle");
-
-// Load saved theme
-if (localStorage.getItem("theme") === "dark") {
-    document.body.classList.add("dark");
-    themeToggle.textContent = "☀️ Light Mode";
 }
+    
+// Sort Transactions
+document.getElementById("sort").addEventListener("change", function () {
 
-// Toggle theme
-themeToggle.addEventListener("click", function () {
+    const sortValue = this.value;
 
-    document.body.classList.toggle("dark");
-
-    if (document.body.classList.contains("dark")) {
-        localStorage.setItem("theme", "dark");
-        themeToggle.textContent = "☀️ Light Mode";
-    } else {
-        localStorage.setItem("theme", "light");
-        themeToggle.textContent = "🌙 Dark Mode";
+    if (sortValue === "high") {
+        transactions.sort((a, b) => b.amount - a.amount);
     }
 
+    else if (sortValue === "low") {
+        transactions.sort((a, b) => a.amount - b.amount);
+    }
+
+    else if (sortValue === "category") {
+        transactions.sort((a, b) => a.category.localeCompare(b.category));
+    }
+
+    displayTransactions();
 });
